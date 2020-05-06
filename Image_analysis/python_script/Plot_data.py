@@ -24,10 +24,8 @@ import pickle
 import math
 import time
 import tkinter as tk
-from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
-from scipy import stats
 #_________________________________________
 
 # 1. Importing data from Tracking machine
@@ -367,7 +365,8 @@ def Quit_prog(): #when the user want to quit programm
     with open ('data/binary/restart.txt', 'wb') as f:
         pickle.dump(0,f)
     f.close()
-    plt.close()
+    plt.close(fig1)
+    plt.close(fig2)
     restartroot.destroy()
     root.destroy()
 
@@ -394,4 +393,5 @@ mButton8.pack()
 root.mainloop() #Tk loop
 #end
 #-------------------------------------------------------------------------------------
+
 

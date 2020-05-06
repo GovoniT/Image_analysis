@@ -56,12 +56,12 @@ my_screen_height = window.winfo_screenheight()
 global screenreduction
 screenreduction=0
 #if the video is too big for user screen then resize it
-while(im_w > my_screen_width):
+while(im_w+300 > my_screen_width):
     im_w=im_w/2
     im_h=im_h/2
     screenreduction+=1 #dont forget to save how many time the image is smaller than the real one
 
-while(im_h > my_screen_height):
+while(im_h +400> my_screen_height):
     im_w=im_w/2
     im_h=im_h/2
     screenreduction+=1
@@ -82,8 +82,6 @@ lmain = tk.Label(imageFrame)
 lmain.pack()
 lmain.place(x=0,y=0)
 
-
-# 2.3 HSV variable for each color
 
 # 2.3.1 V for value  [0,255]
 

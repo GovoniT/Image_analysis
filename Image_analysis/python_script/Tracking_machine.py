@@ -30,9 +30,9 @@ import time
 
 retval = os.getcwd() # main script directoy : python script
 
-path_data =retval+"\\data" # frame directoy : data
+path_data =retval+"/data" # frame directoy : data
 
-path_binary=path_data+"\\binary" # frame directoy : binary
+path_binary=path_data+"/binary" # frame directoy : binary
 #_________________________________________
 
 # 2. Get back video name
@@ -43,7 +43,11 @@ f.close()
 # 2.1 video properties
 cap = cv2.VideoCapture(name_video)
 numberframe=int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) #get number of frame
-fps=cap.get(cv2.CAP_PROP_FPS)#get fps of the video 
+fps=cap.get(cv2.CAP_PROP_FPS)#get fps of the video
+#tochange
+iphonepfs=240
+fps=iphonepfs
+# 
 # time_of_record
 time_of_record = (numberframe-1)/fps
 #video size
@@ -156,6 +160,16 @@ for number, item in enumerate(frame_liste):# get frame by frame
                 globals()['pos_'+color].append((center_x,center_y))
                 globals()['angle_'+color].append(angle)
             
+                #draw principle contour and save this image to check futur ploted data
+                
+                '''
+                box = cv2.boxPoints(((center_x,center_y),size_rect,angle))
+                box = np.int0(box)
+                rectcont=cv2.drawContours(im,[box],0,globals()['code_'+color],5)
+                name_contour = 'binary/tracked' + str(number) +'_'+color+'_'+str(object_found_image) +'.jpg'
+                cv2.imwrite(name_contour, rectcont)
+                '''
+                
         #if no object, the data of the frame is not exploitable and
         #we must not use it
         if object_found_image == 0:
@@ -360,6 +374,20 @@ for color in color_to_track:
                 #new_angle
                 globals()['angle_'+color][indice+interp_iter]=mean_rect[2]
 
+                #point of control for the New rectangle function
+                
+                          
+                '''
+                #show on image whats going on
+                im = cv2.imread('frame'+str(indice_2)+'.jpg')
+                #draw principle contour and save this image to check
+                box = cv2.boxPoints(tuple(mean_rect))
+                box = np.int0(box)
+                rectcont=cv2.drawContours(im,[box],0,globals()['code_'+color],2)
+                name_contour_mean = 'binary/tracked_mean_'+str(indice_2)+'_'+color+'_'+str(number-interp_iter+1) + '.jpg'
+                cv2.imwrite(name_contour_mean, rectcont)
+                '''
+                
 
             if indice == globals()['angle_ref_'+color][1]:
                 globals()['angle_offset_'+color] =  mean_rect[2]- globals()['angle_offset_'+color]
