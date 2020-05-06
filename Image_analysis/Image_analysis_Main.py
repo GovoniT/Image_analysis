@@ -25,7 +25,7 @@ import pickle
 
 retval = os.getcwd() #main directroy : Image_analysis
 
-pathofscript =retval+"\\python_script"  #path to all scripts
+pathofscript =retval+"/python_script"  #path to all scripts
 
 os.chdir(pathofscript) #go to python_script folder
 
@@ -36,7 +36,7 @@ try: #try to create the directory
 except OSError: #report if some error occures
     print ('Error: Creating directory of data')
 
-path_data =pathofscript+"\\data" # frame directoy : data
+path_data =pathofscript+"/data" # frame directoy : data
 
 # 2.2 Creating the data_contour directory to store the tracked contour
 try:
@@ -55,7 +55,7 @@ try:
 except OSError:
     print ('Error: Creating directory of binary')
 
-path_binary =path_data+"\\binary" # frame directoy : My_data
+path_binary =path_data+"/binary" # frame directoy : My_data
 
 os.chdir(path_binary) # directory change for binary
 
