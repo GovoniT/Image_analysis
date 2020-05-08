@@ -44,10 +44,6 @@ f.close()
 cap = cv2.VideoCapture(name_video)
 numberframe=int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) #get number of frame
 fps=cap.get(cv2.CAP_PROP_FPS)#get fps of the video
-#tochange
-iphonepfs=240
-fps=iphonepfs
-# 
 # time_of_record
 time_of_record = (numberframe-1)/fps
 #video size

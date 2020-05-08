@@ -223,7 +223,7 @@ def show_frame(): # #show_frame is used to display the image and show the tracke
                 rect = ((center_x,center_y),size_rect,angle) #each rectangle contour has a give center,size and angle
                 box = cv2.boxPoints(rect) #create the rectangle found
                 box = np.int0(box)
-                rectcont=cv2.drawContours(frame,[box],0,globals()['code_'+color],1) #draw it on the drame in the right color code
+                rectcont=cv2.drawContours(frame,[box],0,globals()['code_'+color],3) #draw it on the drame in the right color code
 
     #resize the image so that it can be desplayed one the user screen
     rectcont = cv2.resize(rectcont, tuple([int(im_w),int(im_h)]), interpolation = cv2.INTER_AREA)
@@ -234,7 +234,7 @@ def show_frame(): # #show_frame is used to display the image and show the tracke
     imgtk = ImageTk.PhotoImage(image=img)
     lmain.imgtk = imgtk
     lmain.configure(image=imgtk)
-    lmain.after(10, show_frame) #show next frame in 10 [ms]
+    lmain.after(20, show_frame) #show next frame in 10 [ms]
 
 
 # 2.5 Tk button and variable for tune the tracking
