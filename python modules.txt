@@ -1,7 +1,0 @@
-python module             cmd
-
-opencv-python 4.2.0.34 		pip install opencv-python
-Pillow 7.1.2 			        pip install Pillow
-PySimpleGUI 4.18.2 		    pip install PySimpleGUI
-matplotlib 3.2.1		      pip install matplotlib
-numpy 7.1.1               pip install numpy
