@@ -1,12 +1,12 @@
-# -------------------------------------------------------------------------------------- #
-# EPFL Bachelor Project : Testing and verification of a tape-spring based solar array    #
-# Authors:                                                                               #
-# Cédric Fontaine                                                                        #
-# Jérémie Arthur Maurice Pochon                                                          #
-# Malicia Leipold                                                                        #
-# Tony Govoni                                                                            #
-# April 18.04.2020                                                                       #
-# -------------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------------- 
+# EPFL Bachelor Project : Testing and verification of a tape-spring based solar array    
+# Authors:                                                                               
+# Cédric Fontaine                                                                        
+# Jérémie Arthur Maurice Pochon                                                          
+# Malicia Leipold                                                                        
+# Tony Govoni                                                                            
+# April 18.04.2020                                                                       
+# -------------------------------------------------------------------------------------- 
 
 # Python image tracking and analysis 2020
 # Code developer :
@@ -38,16 +38,9 @@ except OSError: #report if some error occures
 
 path_data =pathofscript+"/data" # frame directoy : data
 
-# 2.2 Creating the data_contour directory to store the tracked contour
-try:
-    if not os.path.exists('data_contour'):
-        os.makedirs('data_contour')
-except OSError:
-    print ('Error: Creating directory of data_contour')
-
 os.chdir(path_data) # directory change for data
 
-# 2.3 Creating the binary directory to store the data relative to the color tracked
+# 2.2 Creating the binary directory to store the data relative to the color tracked
 try:
     if not os.path.exists('binary'):
         os.makedirs('binary')
@@ -59,14 +52,14 @@ path_binary =path_data+"/binary" # frame directoy : My_data
 
 os.chdir(path_binary) # directory change for binary
 
-# 2.4 Creating the My_data directory to store the whole data analysed of a record
+# 2.3 Creating the My_data directory to store the whole data analysed of a record
 try:
     if not os.path.exists('My_data'):
         os.makedirs('My_data')
         
 except OSError:
     print ('Error: Creating directory of My_data')
-# 2.5 Creating the Settings directory to store the settings for tracking
+# 2.4 Creating the Settings directory to store the settings for tracking
 try:
     if not os.path.exists('Settings'):
         os.makedirs('Settings')
@@ -115,4 +108,4 @@ while (restart): #while the restart is asked by the user
     f.close()
 
 # end
-# -------------------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------------------
