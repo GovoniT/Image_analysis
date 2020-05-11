@@ -1,12 +1,12 @@
-# -------------------------------------------------------------------------------------- #
-# EPFL Bachelor Project : Testing and verification of a tape-spring based solar array    #
-# Authors:                                                                               #
-# Cédric Fontaine                                                                        #
-# Jérémie Arthur Maurice Pochon                                                          #
-# Malicia Leipold                                                                        #
-# Tony Govoni                                                                            #
-# April 18.04.2020                                                                       #
-# -------------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------------- 
+# EPFL Bachelor Project : Testing and verification of a tape-spring based solar array    
+# Authors:                                                                               
+# Cédric Fontaine                                                                        
+# Jérémie Arthur Maurice Pochon                                                          
+# Malicia Leipold                                                                        
+# Tony Govoni                                                                            
+# April 18.04.2020                                                                       
+# -------------------------------------------------------------------------------------- 
 
 # Python image tracking and analysis 2020
 # Code developer :
@@ -68,7 +68,7 @@ while(im_h +400> my_screen_height):
 
 window.wm_title("Tracking settings")
 window.config(background="#FFFFFF")
-window.geometry(str(int(im_w+266))+'x'+str(int(im_h)+300)) #geometry in function of the video size
+window.geometry(str(int(im_w+266))+'x'+str(int(im_h)+400)) #geometry in function of the video size
 
 color_button_w=10 #General width used for the color button
 
@@ -201,15 +201,15 @@ def show_frame(): # #show_frame is used to display the image and show the tracke
 
     # Threshold the HSV image to get the colors that are in specific range [H down, S,V] to [H up,255,255]
     for color in color_to_track:                                                
-        globals()['mask_'+color] = cv2.inRange(cv2image,(globals()[color+'_lvl_down'],saturation,value),(globals()[color+'_lvl_up'],255,255))
-
-    # Bitwise-AND mask and original image for different colors
-    for color in color_to_track:
-        globals()['res_'+color] = cv2.bitwise_and(frame,frame, mask= globals()['mask_'+color])
+        globals()['mask_'+color] = cv2.inRange(cv2image,\
+        (globals()[color+'_lvl_down'],saturation,value),\
+        (globals()[color+'_lvl_up'],255,255))
 
     #contouring in the image for different colors
     for color in color_to_track:
-        globals()['contours_'+color],globals()['hierarchy_'+color] = cv2.findContours(globals()['mask_'+color],cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+        globals()['contours_'+color],globals()['hierarchy_'+color] =\
+        cv2.findContours(globals()['mask_'+color],var_algo_choice.get(),\
+        cv2.CHAIN_APPROX_SIMPLE)
 
     #even if no object tracked, display rectcont (the image)
     rectcont=frame
@@ -218,12 +218,14 @@ def show_frame(): # #show_frame is used to display the image and show the tracke
     for color in color_to_track:
         for cnt in globals()['contours_'+color]:
             ((center_x,center_y),size_rect,angle) = cv2.minAreaRect(cnt)
-            if size_rect[0] >minimal_size or size_rect[1] >minimal_size :#filter to eliminate noise that make small rectangle
+            if size_rect[0] >minimal_size or size_rect[1] >minimal_size :
+            #filter to eliminate noise that make small rectangle
             
                 rect = ((center_x,center_y),size_rect,angle) #each rectangle contour has a give center,size and angle
                 box = cv2.boxPoints(rect) #create the rectangle found
                 box = np.int0(box)
-                rectcont=cv2.drawContours(frame,[box],0,globals()['code_'+color],3) #draw it on the drame in the right color code
+                rectcont=cv2.drawContours(frame,[box],0,\
+                globals()['code_'+color],3) #draw it on the drame in the right color code
 
     #resize the image so that it can be desplayed one the user screen
     rectcont = cv2.resize(rectcont, tuple([int(im_w),int(im_h)]), interpolation = cv2.INTER_AREA)
@@ -289,7 +291,10 @@ def selection(): #selection is used to select a color H parameter that the user 
     color_choice=var_color_choice.get()
     global index_color
     index_color=all_color.index(color_choice)
-    tk.Label(window, text = '['+str(globals()[color_choice+'_lvl_down'])+','+str(globals()[color_choice+'_lvl_up'])+']',font=("Helvetica", 14),fg=all_color_name[index_color],width=20,height=2).place(x=135+im_w/2-118,y=im_h+120)
+    tk.Label(window, text = '['+str(globals()[color_choice+'_lvl_down'])+\
+    ','+str(globals()[color_choice+'_lvl_up'])+']',font=("Helvetica", 14),\
+    fg=all_color_name[index_color],width=20,height=2).place(\
+        x=135+im_w/2-118,y=im_h+120)
 
 #radio variable ( only one can be choose)
 var_color_choice = tk.StringVar()
@@ -343,20 +348,32 @@ tk.Label(window, text = '-',font=("Helvetica", 14),width=20,height=2).place(x=13
 def color_up_plus():
     color_choice=var_color_choice.get()
     globals()[color_choice+'_lvl_up']+=2
-    tk.Label(window, text = '['+str(globals()[color_choice+'_lvl_down'])+','+str(globals()[color_choice+'_lvl_up'])+']',font=("Helvetica", 14),fg=all_color_name[index_color],width=20,height=2).place(x=135+im_w/2-118,y=im_h+120)
+    tk.Label(window, text = '['+str(globals()[color_choice+'_lvl_down'])\
+    +','+str(globals()[color_choice+'_lvl_up'])+']',font=("Helvetica",\
+    14),fg=all_color_name[index_color],width=20,height=2).place(\
+    x=135+im_w/2-118,y=im_h+120)
     
 def color_up_minus():
     color_choice=var_color_choice.get()
     globals()[color_choice+'_lvl_up']-=2
-    tk.Label(window, text = '['+str(globals()[color_choice+'_lvl_down'])+','+str(globals()[color_choice+'_lvl_up'])+']',font=("Helvetica", 14),fg=all_color_name[index_color],width=20,height=2).place(x=135+im_w/2-118,y=im_h+120)
+    tk.Label(window, text = '['+str(globals()[color_choice+'_lvl_down'])\
+    +','+str(globals()[color_choice+'_lvl_up'])+']',font=("Helvetica",\
+    14),fg=all_color_name[index_color],width=20,height=2).place(\
+    x=135+im_w/2-118,y=im_h+120)
 def color_down_plus():
     color_choice=var_color_choice.get()
     globals()[color_choice+'_lvl_down']+=2
-    tk.Label(window, text = '['+str(globals()[color_choice+'_lvl_down'])+','+str(globals()[color_choice+'_lvl_up'])+']',font=("Helvetica", 14),fg=all_color_name[index_color],width=20,height=2).place(x=135+im_w/2-118,y=im_h+120)
+    tk.Label(window, text = '['+str(globals()[color_choice+'_lvl_down'])\
+    +','+str(globals()[color_choice+'_lvl_up'])+']',font=("Helvetica",\
+    14),fg=all_color_name[index_color],width=20,height=2).place(
+    \x=135+im_w/2-118,y=im_h+120)
 def color_down_minus():
     color_choice=var_color_choice.get()
     globals()[color_choice+'_lvl_down']-=2
-    tk.Label(window, text = '['+str(globals()[color_choice+'_lvl_down'])+','+str(globals()[color_choice+'_lvl_up'])+']',font=("Helvetica", 14),fg=all_color_name[index_color],width=20,height=2).place(x=135+im_w/2-118,y=im_h+120)
+    tk.Label(window, text = '['+str(globals()[color_choice+'_lvl_down'])\
+    +','+str(globals()[color_choice+'_lvl_up'])+']',font=("Helvetica",\
+    14),fg=all_color_name[index_color],width=20,height=2).place(\
+    x=135+im_w/2-118,y=im_h+120)
 
 #color H button placing
 
@@ -455,7 +472,21 @@ sizeupB.place(x=137+im_w/2+205,y=im_h+179)
 sizedownB.pack()
 sizedownB.place(x=137+im_w/2+205,y=im_h+204)
 
-# 2.6 Tk setting exit and save
+# 2.6 Contour algorithm choice
+
+#radio variable ( only one can be choose)
+var_algo_choice = tk.IntVar()
+#radio button
+ExternalR = tk.Radiobutton(window, text="Ext.", variable=var_algo_choice, value=0,width = color_button_w,font=("Helvetica", 13),height=2)
+ListR = tk.Radiobutton(window, text="List", variable=var_algo_choice, value=1,width = color_button_w,font=("Helvetica", 13),height=2)
+#radio button placing and label
+
+tk.Label(window, text = 'Contour algo : ',font=("Helvetica", 14),width=12,height=2).place(x=137+im_w/2-200,y=im_h+240)
+ExternalR.pack()
+ExternalR.place(x=137+im_w/2-50,y=im_h+240)
+ListR.pack()
+ListR.place(x=137+im_w/2+75,y=im_h+240)
+# 2.7 Tk setting exit and save
 
 def Quit_prog():    #if the user confirm to quit setting
     
@@ -473,6 +504,11 @@ def Quit_prog():    #if the user confirm to quit setting
     with open ('data/binary/Settings/minimal_size.txt', 'wb') as f:
         pickle.dump(minimal_size,f)
     f.close()
+   #contour_algo
+    with open ('data/binary/Settings/contour_algo.txt', 'wb') as f:
+        pickle.dump(var_algo_choice.get(),f)
+    f.close()
+    
     #color we want to track + upper and lower bound + the BGR corresponding code
     with open ('data/binary/Settings/color_to_track.txt', 'wb') as f:
         pickle.dump(color_to_track,f)
@@ -508,7 +544,7 @@ def Exit(): #open a window to confirm the color you want to track and confirm yo
 #button for exit
 exitB= tk.Button(text = 'Save settings',font=("Helvetica", 16),width=20, command=Exit)
 exitB.pack()
-exitB.place(x=137+im_w/2-134,y=im_h+240)
+exitB.place(x=137+im_w/2-134,y=im_h+300)
 
 show_frame()  #Display the frame
 window.mainloop()  #Starts tkinter loop
@@ -653,4 +689,4 @@ if __name__ == '__main__':
 #release capture
 cap.release()
 #end
-# -------------------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------------------

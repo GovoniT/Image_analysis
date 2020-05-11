@@ -1,12 +1,12 @@
-# -------------------------------------------------------------------------------------- #
-# EPFL Bachelor Project : Testing and verification of a tape-spring based solar array    #
-# Authors:                                                                               #
-# Cédric Fontaine                                                                        #
-# Jérémie Arthur Maurice Pochon                                                          #
-# Malicia Leipold                                                                        #
-# Tony Govoni                                                                            #
-# April 18.04.2020                                                                       #
-# -------------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------------- 
+# EPFL Bachelor Project : Testing and verification of a tape-spring based solar array    
+# Authors:                                                                               
+# Cédric Fontaine                                                                        
+# Jérémie Arthur Maurice Pochon                                                          
+# Malicia Leipold                                                                        
+# Tony Govoni                                                                            
+# April 18.04.2020                                                                       
+# -------------------------------------------------------------------------------------- 
 
 # Python image tracking and analysis 2020
 # Code developer :
@@ -140,4 +140,4 @@ videochoice.mainloop()  #Starts Main GUi Loop
 #while loop finish destroy all windows and release webcam
 cap.release()
 #end
-#______________________________________
+# --------------------------------------------------------------------------------------

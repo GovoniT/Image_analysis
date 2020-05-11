@@ -1,18 +1,20 @@
-# EPFL Bachelor Project : Testing and verification of a tape-spring based solar array
-# Authors:
-# Cédric Fontaine
-# Jérémie Arthur Maurice Pochon
-# Malicia Leipold
-# Govoni Tony
-#_________________________________________
+# -------------------------------------------------------------------------------------- 
+# EPFL Bachelor Project : Testing and verification of a tape-spring based solar array    
+# Authors:                                                                               
+# Cédric Fontaine                                                                        
+# Jérémie Arthur Maurice Pochon                                                          
+# Malicia Leipold                                                                        
+# Tony Govoni                                                                            
+# April 18.04.2020                                                                       
+# -------------------------------------------------------------------------------------- 
 
-#Python image tracking and analysis 2020
+# Python image tracking and analysis 2020
 # code developer :
-# Govoni Tony
+# Tony Govoni
 #_________________________________________
 
-#Plot_data : the goal of this script is to plot the position and angle of each object detected
-
+# Tracking_machine : The goal of this script is to find all contour of colored object in a image and
+# store all data in multiple text files in the folder binary
 #_________________________________________
 
 #importing module
@@ -138,7 +140,8 @@ for color in color_to_track:
             plot_data_x.append(globals()['pos_x_'+color][frame])
             plot_data_y.append(globals()['pos_y_'+color][frame])
     #plot position
-    plt.plot(plot_data_x,plot_data_y,color=BGR_to_matplotlibRGB(globals()['code_'+color]),linestyle='-')
+    plt.plot(plot_data_x,plot_data_y,color=\
+    BGR_to_matplotlibRGB(globals()['code_'+color]),linestyle='-')
 plt.title('General path : center of panel')
 plt.axis([0,dimensions[1],dimensions[0],0])
 plt.gca().set_aspect('equal', adjustable='box')
@@ -151,19 +154,31 @@ for color in color_to_track:
     globals()['acc_magn_'+color]=[]
     globals()['vel_magn_'+color]=[]
     for vector_xy in globals()['veloc_'+color]:
-        globals()['vel_magn_'+color].append(math.sqrt(vector_xy[0]**2+vector_xy[1]**2))
+        globals()['vel_magn_'+color].append(\
+        math.sqrt(vector_xy[0]**2+vector_xy[1]**2))
+        
     for vector_xy in globals()['acc_'+color]:
-        globals()['acc_magn_'+color].append(math.sqrt(vector_xy[0]**2+vector_xy[1]**2))
+        globals()['acc_magn_'+color].append(\
+        math.sqrt(vector_xy[0]**2+vector_xy[1]**2))
+        
     plot_data_acc=[]
     plot_data_vel=[]
     plot_data_ang_acc=[]
     plot_data_ang_vel=[]
     for frame in range(0,number_frame):
         if frame not in fail_to_track: #do not plot image not found
-            plot_data_acc.append(globals()['acc_magn_'+color][frame])
-            plot_data_vel.append(globals()['vel_magn_'+color][frame])
-            plot_data_ang_acc.append(globals()['angular_acc_'+color][frame])
-            plot_data_ang_vel.append(globals()['angular_veloc_'+color][frame])
+            plot_data_acc.append(\
+            globals()['acc_magn_'+color][frame])
+            
+            plot_data_vel.append(\
+            globals()['vel_magn_'+color][frame])
+            
+            plot_data_ang_acc.append(\
+            globals()['angular_acc_'+color][frame])
+            
+            plot_data_ang_vel.append(\
+            globals()['angular_veloc_'+color][frame])
+            
         if frame in fail_to_track:
             plot_data_acc.append(np.nan)
             plot_data_vel.append(np.nan)
@@ -171,29 +186,35 @@ for color in color_to_track:
             plot_data_ang_vel.append(np.nan)
     #plot
     #velocity
-    a2[0].plot(time_line,plot_data_vel,color=BGR_to_matplotlibRGB(globals()['code_'+color]),linestyle='-')
+    a2[0].plot(time_line,plot_data_vel,color=\
+    BGR_to_matplotlibRGB(globals()['code_'+color]),linestyle='-')
     a2[0].set_title('Velocity magnitude')
     a2[0].set_xlim([0,time_of_record])
     a2[0].set_ylim([0,max(globals()['vel_magn_'+color])])
     a2[0].set_ylabel('V [m/s]')
     #accelration
-    a2[1].plot(time_line,plot_data_acc,color=BGR_to_matplotlibRGB(globals()['code_'+color]),linestyle='-')
+    a2[1].plot(time_line,plot_data_acc,color=\
+    BGR_to_matplotlibRGB(globals()['code_'+color]),linestyle='-')
     a2[1].set_title('Acceleration magnitude')
     a2[1].set_xlim([0,time_of_record])
     a2[1].set_ylim([0,max(globals()['acc_magn_'+color])])
     a2[1].set_ylabel('A [m/s^2]')
     #angl_veloc
-    a2[2].plot(time_line,plot_data_ang_vel,color=BGR_to_matplotlibRGB(globals()['code_'+color]),linestyle='-')
+    a2[2].plot(time_line,plot_data_ang_vel,color=\
+    BGR_to_matplotlibRGB(globals()['code_'+color]),linestyle='-')
     a2[2].set_title('Angular velocity')
     a2[2].set_xlim([0,time_of_record])
-    a2[2].set_ylim([min(globals()['angular_veloc_'+color]),max(globals()['angular_veloc_'+color])])
+    a2[2].set_ylim([min(globals()['angular_veloc_'+color]),\
+    max(globals()['angular_veloc_'+color])])
     a2[2].set_ylabel('phi [rad/s]')
     #angl_acc
-    a2[3].plot(time_line,plot_data_ang_acc,color=BGR_to_matplotlibRGB(globals()['code_'+color]),linestyle='-')
+    a2[3].plot(time_line,plot_data_ang_acc,color=\
+    BGR_to_matplotlibRGB(globals()['code_'+color]),linestyle='-')
     a2[3].set_title('Angular acceleration')
     a2[3].set_xlim([0,time_of_record])
     a2[3].set_xlabel('time [s]')
-    a2[3].set_ylim([min(globals()['angular_acc_'+color]),max(globals()['angular_acc_'+color])])
+    a2[3].set_ylim([min(globals()['angular_acc_'+color]),\
+    max(globals()['angular_acc_'+color])])
     a2[3].set_ylabel('phi_dot [rad/s^2]')
 
 
@@ -222,11 +243,32 @@ def Click_Next(): #plot the next frame data
     if counter not in fail_to_track: #plot only if data available
         for color in color_to_track:
             #define 4 small rectangle to generate one big rectangle from the center
-            rect1=Rectangle([globals()['pos_x_'+color][counter],globals()['pos_y_'+color][counter]],size_mean_x, size_mean_y,globals()['angle_'+color][counter],facecolor=BGR_to_matplotlibRGB(globals()['code_'+color]), edgecolor='black')
-            rect2=Rectangle([globals()['pos_x_'+color][counter],globals()['pos_y_'+color][counter]],-size_mean_x, size_mean_y,globals()['angle_'+color][counter],facecolor=BGR_to_matplotlibRGB(globals()['code_'+color]), edgecolor='black')
-            rect3=Rectangle([globals()['pos_x_'+color][counter],globals()['pos_y_'+color][counter]],size_mean_x, -size_mean_y,globals()['angle_'+color][counter],facecolor=BGR_to_matplotlibRGB(globals()['code_'+color]), edgecolor='black')
-            rect4=Rectangle([globals()['pos_x_'+color][counter],globals()['pos_y_'+color][counter]],-size_mean_x, -size_mean_y,globals()['angle_'+color][counter],facecolor=BGR_to_matplotlibRGB(globals()['code_'+color]), edgecolor='black')
-            plt.title('Frame : '+str(counter)+'     Time : '+str(round(time_line[counter],4)))
+            rect1=Rectangle([globals()['pos_x_'+color][counter],\
+            globals()['pos_y_'+color][counter]],size_mean_x,
+            size_mean_y,globals()['angle_'+color][counter],\
+            facecolor=BGR_to_matplotlibRGB(\
+            globals()['code_'+color]),edgecolor='black')
+            
+            rect2=Rectangle([globals()['pos_x_'+color][counter],\
+            globals()['pos_y_'+color][counter]],-size_mean_x,\
+            size_mean_y,globals()['angle_'+color][counter],
+            facecolor=BGR_to_matplotlibRGB(\
+            globals()['code_'+color]), edgecolor='black')
+            
+            rect3=Rectangle([globals()['pos_x_'+color][counter],\
+            globals()['pos_y_'+color][counter]],size_mean_x,\
+            -size_mean_y,globals()['angle_'+color][counter],\
+            facecolor=BGR_to_matplotlibRGB(\
+            globals()['code_'+color]), edgecolor='black')
+            
+            rect4=Rectangle([globals()['pos_x_'+color][counter],\
+            globals()['pos_y_'+color][counter]],-size_mean_x,\
+            -size_mean_y,globals()['angle_'+color][counter],\
+            facecolor=BGR_to_matplotlibRGB(\
+            globals()['code_'+color]), edgecolor='black')
+            
+            plt.title('Frame : '+str(counter)+\
+            '     Time : '+str(round(time_line[counter],4)))
             #add rectangle
             currentAxis = fig1.gca()
             currentAxis.add_patch(rect1)
@@ -251,11 +293,33 @@ def Click_Previous(): #same function but decrease
     if counter not in fail_to_track:
         for color in color_to_track:
             #define 4 small rectangle to generate one big rectangle from the center
-            rect1=Rectangle([globals()['pos_x_'+color][counter],globals()['pos_y_'+color][counter]],size_mean_x, size_mean_y,globals()['angle_'+color][counter],facecolor=BGR_to_matplotlibRGB(globals()['code_'+color]), edgecolor='black')
-            rect2=Rectangle([globals()['pos_x_'+color][counter],globals()['pos_y_'+color][counter]],-size_mean_x, size_mean_y,globals()['angle_'+color][counter],facecolor=BGR_to_matplotlibRGB(globals()['code_'+color]), edgecolor='black')
-            rect3=Rectangle([globals()['pos_x_'+color][counter],globals()['pos_y_'+color][counter]],size_mean_x, -size_mean_y,globals()['angle_'+color][counter],facecolor=BGR_to_matplotlibRGB(globals()['code_'+color]), edgecolor='black')
-            rect4=Rectangle([globals()['pos_x_'+color][counter],globals()['pos_y_'+color][counter]],-size_mean_x, -size_mean_y,globals()['angle_'+color][counter],facecolor=BGR_to_matplotlibRGB(globals()['code_'+color]), edgecolor='black')
-            plt.title('Frame : '+str(counter)+'     Time : '+str(round(time_line[counter],4)))
+            #define 4 small rectangle to generate one big rectangle from the center
+            rect1=Rectangle([globals()['pos_x_'+color][counter],\
+            globals()['pos_y_'+color][counter]],size_mean_x,
+            size_mean_y,globals()['angle_'+color][counter],\
+            facecolor=BGR_to_matplotlibRGB(\
+            globals()['code_'+color]),edgecolor='black')
+            
+            rect2=Rectangle([globals()['pos_x_'+color][counter],\
+            globals()['pos_y_'+color][counter]],-size_mean_x,\
+            size_mean_y,globals()['angle_'+color][counter],
+            facecolor=BGR_to_matplotlibRGB(\
+            globals()['code_'+color]), edgecolor='black')
+            
+            rect3=Rectangle([globals()['pos_x_'+color][counter],\
+            globals()['pos_y_'+color][counter]],size_mean_x,\
+            -size_mean_y,globals()['angle_'+color][counter],\
+            facecolor=BGR_to_matplotlibRGB(\
+            globals()['code_'+color]), edgecolor='black')
+            
+            rect4=Rectangle([globals()['pos_x_'+color][counter],\
+            globals()['pos_y_'+color][counter]],-size_mean_x,\
+            -size_mean_y,globals()['angle_'+color][counter],\
+            facecolor=BGR_to_matplotlibRGB(\
+            globals()['code_'+color]), edgecolor='black')
+            
+            plt.title('Frame : '+str(counter)+\
+            '     Time : '+str(round(time_line[counter],4)))
             #add rectangle
             currentAxis = fig1.gca()
             currentAxis.add_patch(rect1)
@@ -393,5 +457,3 @@ mButton8.pack()
 root.mainloop() #Tk loop
 #end
 #-------------------------------------------------------------------------------------
-
-

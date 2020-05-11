@@ -1,10 +1,12 @@
-# EPFL Bachelor Project : Testing and verification of a tape-spring based solar array
-# Authors:
-# Cédric Fontaine
-# Jérémie Arthur Maurice Pochon
-# Malicia Leipold
-# Tony Govoni
-#_________________________________________
+# -------------------------------------------------------------------------------------- 
+# EPFL Bachelor Project : Testing and verification of a tape-spring based solar array    
+# Authors:                                                                               
+# Cédric Fontaine                                                                        
+# Jérémie Arthur Maurice Pochon                                                          
+# Malicia Leipold                                                                        
+# Tony Govoni                                                                            
+# April 18.04.2020                                                                       
+# -------------------------------------------------------------------------------------- 
 
 # Python image tracking and analysis 2020
 # code developer :
@@ -74,7 +76,10 @@ f.close
 with open ('Settings/minimal_size.txt', 'rb') as f:
     minimal_size= pickle.load(f)
 f.close
-# time_of_record
+#contour_algo
+with open ('Settings/contour_algo.txt', 'rb') as f:
+    contour_algo= pickle.load(f)
+f.close()
 
 # calibration [m/pixel] ratio
 with open ('Settings/cal_len.txt', 'rb') as f:
@@ -133,16 +138,15 @@ for number, item in enumerate(frame_liste):# get frame by frame
 
     # Threshold the HSV image to get the colors that are in specific range
     for color in color_to_track:
-        globals()['mask_'+color] = cv2.inRange(hsv, (globals()[color+'_lvl_down'],saturation,light),(globals()[color+'_lvl_up'],255,255))
-
-    # Bitwise-AND mask and original image for different colors
-    for color in color_to_track:
-        globals()['res_'+color] = cv2.bitwise_and(im,im, mask= globals()['mask_'+color])
+        globals()['mask_'+color] = cv2.inRange(hsv,\
+        (globals()[color+'_lvl_down'],saturation,light),\
+        (globals()[color+'_lvl_up'],255,255))
 
     #contouring in the image for different colors
     for color in color_to_track:
-        globals()['contours_'+color],globals()['hierarchy_'+color] = cv2.findContours(globals()['mask_'+color],cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
-    
+        globals()['contours_'+color],globals()['hierarchy_'+color] =\
+        cv2.findContours(globals()['mask_'+color],contour_algo,\
+        cv2.CHAIN_APPROX_SIMPLE)
 
     #for every color contours, find the biggest rectangle
     for color in color_to_track:
@@ -244,11 +248,14 @@ def New_rectangle(rec_1_center,rec_2_center,rec_1_sz,rec_2_sz,angle2):
         angle_origin= -angle_respect_x_axis
         
     #edge of the mean rectangle construction
-    edge1=[rec_1_center[0]-(vec_n[0]*rec_1_L/2),rec_1_center[1]-(vec_n[1]*rec_1_L/2)]
-    edge2=[rec_2_center[0]+(vec_n[0]*rec_2_L/2),rec_2_center[1]+(vec_n[1]*rec_2_L/2)]
+    edge1=[rec_1_center[0]-(vec_n[0]*rec_1_L/2),\
+    rec_1_center[1]-(vec_n[1]*rec_1_L/2)]
+    edge2=[rec_2_center[0]+(vec_n[0]*rec_2_L/2),\
+    rec_2_center[1]+(vec_n[1]*rec_2_L/2)]
     #mean rectangle computed properties
     new_size_x=norm_vec([edge2[0]-edge1[0],edge2[1]-edge1[1]])
-    new_center=[edge1[0]+(vec_n[0]*new_size_x/2) , edge1[1]+(vec_n[1]*new_size_x/2)]
+    new_center=[edge1[0]+(vec_n[0]*new_size_x/2) ,\
+    edge1[1]+(vec_n[1]*new_size_x/2)]
     new_size_y=(rec_1_l+rec_2_l)/2
     return [new_center, [new_size_x,new_size_y],angle_origin]
 
@@ -274,7 +281,8 @@ for color in color_to_track:
     for number in globals()['number_'+color]:
         if number >1:
             globals()['angle_ref_'+color]=[True] #signal that an absolute angle can be compute
-            globals()['angle_ref_'+color].append(globals()['number_'+color].index(number)) #get the index
+            globals()['angle_ref_'+color].append(\
+            globals()['number_'+color].index(number)) #get the index
             break
     #then apply general angle correction
     angle_corr=0
@@ -289,12 +297,18 @@ for color in color_to_track:
         elif number >1 :
             if notfoundjump==0: #dont compute if no object found in this frame
                 #compute angle of correction between frame and last frame
-                angle_corr =angle_corr+ angle_correction(globals()['angle_'+color][indice],globals()['angle_'+color][indice-1])
+                angle_corr =angle_corr+ angle_correction(\
+                globals()['angle_'+color][indice],\
+                globals()['angle_'+color][indice-1])
+                
                 globals()['angle_ref_'+color].append(angle_corr) #store the correction
                 indice += number # indice go to next frame and not to next object
             else: #object not found in last frame
                 #compute angle of correction between frame and last frame with an object
-                angle_corr =angle_corr+ angle_correction(globals()['angle_'+color][indice],globals()['angle_'+color][indice-1-notfoundjump])
+                angle_corr =angle_corr+ angle_correction(\
+                globals()['angle_'+color][indice],\
+                globals()['angle_'+color][indice-1-notfoundjump])
+                
                 globals()['angle_ref_'+color].append(angle_corr) #store the correction
                 indice += number # indice go to next frame and not to next object
                 #jump done so reset
@@ -304,12 +318,18 @@ for color in color_to_track:
         elif number ==1:
             if notfoundjump==0: #dont compute if no object found in this frame
                 #compute angle of correction between frame and last frame
-                angle_corr =angle_corr+ angle_correction(globals()['angle_'+color][indice],globals()['angle_'+color][indice-1])
+                angle_corr =angle_corr+ angle_correction(\
+                globals()['angle_'+color][indice],\
+                globals()['angle_'+color][indice-1])
+                
                 globals()['angle_ref_'+color].append(angle_corr) #store the correction
                 indice += 1
             else: #object not found in last frame
                 #compute angle of correction between frame and last frame with an object
-                angle_corr =angle_corr+ angle_correction(globals()['angle_'+color][indice],globals()['angle_'+color][indice-1-notfoundjump])
+                angle_corr =angle_corr+\
+                angle_correction(globals()['angle_'+color][indice],\
+                globals()['angle_'+color][indice-1-notfoundjump])
+                
                 globals()['angle_ref_'+color].append(angle_corr) #store the correction
                 indice += 1
                 #jump done so reset
@@ -329,7 +349,8 @@ for color in color_to_track:
     for number in globals()['number_'+color]:
         if number>0 :#frame correction that need one
             if indice>0:
-                globals()['angle_'+color][indice] += globals()['angle_ref_'+color][indicecorr]
+                globals()['angle_'+color][indice] +=\
+                globals()['angle_ref_'+color][indicecorr]
                 indicecorr+=1
                 indice +=number
         if indice==0 :#frame 0 correction if needed
@@ -343,7 +364,8 @@ for color in color_to_track:
 #if there is an angle of reference, we want to know its value before it will be computed more precisly
 for color in color_to_track:
     if globals()['angle_ref_'+color][0]==True:
-        globals()['angle_offset_'+color]=globals()['angle_'+color][globals()['angle_ref_'+color][1]]
+        globals()['angle_offset_'+color]=\
+        globals()['angle_'+color][globals()['angle_ref_'+color][1]]
 
 # 4.2 Mean rectangle correction
 for color in color_to_track:
@@ -359,7 +381,12 @@ for color in color_to_track:
             interp_iter=number-1 #number of interpolation
             while interp_iter !=0: #we interpolate the next (number-1) rectangle and form 2by2 a new rectangle
                                                   #(rec_1_center,                               rec_2_center,                               rec_1_sz,                                         rec_2_sz,                                 angle2)
-                mean_rect= New_rectangle(globals()['pos_'+color][indice+interp_iter-1],globals()['pos_'+color][indice+interp_iter],globals()['size_'+color][indice+interp_iter-1],globals()['size_'+color][indice+interp_iter],globals()['angle_'+color][indice+interp_iter])
+                mean_rect=\
+                New_rectangle(globals()['pos_'+color][indice+interp_iter-1],\
+                globals()['pos_'+color][indice+interp_iter],\
+                globals()['size_'+color][indice+interp_iter-1],\
+                globals()['size_'+color][indice+interp_iter],\
+                globals()['angle_'+color][indice+interp_iter])
 
                 interp_iter-=1
                 # for the next interpolation, the mean rectangle, will be rectangle_2
@@ -393,9 +420,12 @@ for color in color_to_track:
             globals()['new_size_'+color].append(mean_rect[1])
             globals()['new_angle_'+color].append(mean_rect[2])
         else:
-            globals()['new_size_'+color].append(globals()['size_'+color][indice])
-            globals()['new_pos_'+color].append(globals()['pos_'+color][indice])
-            globals()['new_angle_'+color].append(globals()['angle_'+color][indice])
+            globals()['new_size_'+color].append(\
+            globals()['size_'+color][indice])
+            globals()['new_pos_'+color].append(\
+            globals()['pos_'+color][indice])
+            globals()['new_angle_'+color].append(\
+            globals()['angle_'+color][indice])
         if number>0:
             indice += number
         else: #if number <0 not found image
@@ -416,7 +446,8 @@ for color in color_to_track:
         #then rescale all angle 
         for number in globals()['number_'+color]:
             if number==1:
-                globals()['angle_'+color][indice]+=globals()['angle_offset_'+color]
+                globals()['angle_'+color][indice]+=\
+                globals()['angle_offset_'+color]
             indice+=1
 
 
@@ -459,17 +490,28 @@ for color in color_to_track:
             if notfoundjump==0: #dont compute if no object found in this frame
                 #compute diff between frame and last frame
                 #angle
-                globals()['angular_veloc_'+color].append(Deriv_angle(globals()['angle_'+color][indice-1],globals()['angle_'+color][indice],delta_time))
+                globals()['angular_veloc_'+color].append(\
+                Deriv_angle(globals()['angle_'+color][indice-1],\
+                globals()['angle_'+color][indice],delta_time))
                 #pos
-                globals()['veloc_'+color].append(Deriv(globals()['pos_'+color][indice-1],globals()['pos_'+color][indice],delta_time))
+                globals()['veloc_'+color].append(\
+                Deriv(globals()['pos_'+color][indice-1],\
+                globals()['pos_'+color][indice],delta_time))
                 globals()['time_v_'+color].append(delta_time*indice)
                 indice += 1 # indice go to next frame
             else: #object not found in last frame
                 #compute diff between frame and last frame with an object
                 #angle
-                globals()['angular_veloc_'+color].append(Deriv_angle(globals()['angle_'+color][indice-1-notfoundjump],globals()['angle_'+color][indice],delta_time*(1+notfoundjump)))
+                globals()['angular_veloc_'+color].append(\
+                Deriv_angle(globals()['angle_'+color][indice-1-notfoundjump],\
+                globals()['angle_'+color][indice],\
+                delta_time*(1+notfoundjump)))
                 #pos
-                globals()['veloc_'+color].append(Deriv(globals()['pos_'+color][indice-1-notfoundjump],globals()['pos_'+color][indice],delta_time*(1+notfoundjump)))
+                globals()['veloc_'+color].append(\
+                Deriv(globals()['pos_'+color][indice-1-notfoundjump],\
+                globals()['pos_'+color][indice],\
+                delta_time*(1+notfoundjump)))
+                
                 globals()['time_v_'+color].append(delta_time*indice)
                 indice += 1 # indice go to next frame
                 #jump done so reset
@@ -483,9 +525,18 @@ for color in color_to_track:
     globals()['acc_'+color]=[]
     globals()['time_a_'+color]=[]
     for i in range(1,len(globals()['time_v_'+color])):
-        globals()['angular_acc_'+color].append(Deriv_angle(globals()['angular_veloc_'+color][i-1],globals()['angular_veloc_'+color][i],globals()['time_v_'+color][i]-globals()['time_v_'+color][i-1]))
-        globals()['acc_'+color].append(Deriv(globals()['veloc_'+color][i-1],globals()['veloc_'+color][i],globals()['time_v_'+color][i]-globals()['time_v_'+color][i-1]))
-        globals()['time_a_'+color].append(globals()['time_v_'+color][i])
+        globals()['angular_acc_'+color].append(\
+        Deriv_angle(globals()['angular_veloc_'+color][i-1],\
+        globals()['angular_veloc_'+color][i],\
+        globals()['time_v_'+color][i]-globals()['time_v_'+color][i-1]))
+
+        globals()['acc_'+color].append(\
+        Deriv(globals()['veloc_'+color][i-1],\
+        globals()['veloc_'+color][i],\
+        globals()['time_v_'+color][i]-globals()['time_v_'+color][i-1]))
+
+        globals()['time_a_'+color].append(\
+        globals()['time_v_'+color][i])
 
 #zero padding and add calibration ratio
 for color in color_to_track:
@@ -498,13 +549,21 @@ for color in color_to_track:
     for t in timeline:
         time = timeline.index(t)
         if t in globals()['time_v_'+color]:
-            globals()['veloc_final_'+color].append([globals()['veloc_'+color][indicev][0]*cal_len,globals()['veloc_'+color][indicev][1]*cal_len])
-            globals()['angular_veloc_final_'+color].append(globals()['angular_veloc_'+color][indicev])
+            globals()['veloc_final_'+color].append(\
+            [globals()['veloc_'+color][indicev][0]*cal_len,\
+            globals()['veloc_'+color][indicev][1]*cal_len])
+            
+            globals()['angular_veloc_final_'+color].append(\
+            globals()['angular_veloc_'+color][indicev])
             indicev+=1
             
         if t in globals()['time_a_'+color]:
-            globals()['acc_final_'+color].append([globals()['acc_'+color][indicea][0]*cal_len,globals()['acc_'+color][indicea][1]*cal_len])
-            globals()['angular_acc_final_'+color].append(globals()['angular_acc_'+color][indicea])
+            globals()['acc_final_'+color].append(\
+            [globals()['acc_'+color][indicea][0]*cal_len,\
+            globals()['acc_'+color][indicea][1]*cal_len])
+            
+            globals()['angular_acc_final_'+color].append(\
+            globals()['angular_acc_'+color][indicea])
             indicea+=1
         if t not in globals()['time_v_'+color]:
             globals()['veloc_final_'+color].append([0,0])
@@ -516,8 +575,10 @@ for color in color_to_track:
 #angle convertion in rad
 for color in color_to_track:
    for i in range(0,numberframe):
-      globals()['angular_veloc_final_'+color][i]=globals()['angular_veloc_final_'+color][i]*2*math.pi/360
-      globals()['angular_acc_final_'+color][i]=globals()['angular_acc_final_'+color][i]*2*math.pi/360
+      globals()['angular_veloc_final_'+color][i]=\
+      globals()['angular_veloc_final_'+color][i]*2*math.pi/360
+      globals()['angular_acc_final_'+color][i]=\
+      globals()['angular_acc_final_'+color][i]*2*math.pi/360
       
 
 # writting all data in binary
