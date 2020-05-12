@@ -366,7 +366,7 @@ def color_down_plus():
     tk.Label(window, text = '['+str(globals()[color_choice+'_lvl_down'])\
     +','+str(globals()[color_choice+'_lvl_up'])+']',font=("Helvetica",\
     14),fg=all_color_name[index_color],width=20,height=2).place(
-    \x=135+im_w/2-118,y=im_h+120)
+    x=135+im_w/2-118,y=im_h+120)
 def color_down_minus():
     color_choice=var_color_choice.get()
     globals()[color_choice+'_lvl_down']-=2
@@ -534,6 +534,7 @@ def Exit(): #open a window to confirm the color you want to track and confirm yo
     global end_program_bool
     #start tk window loop for exit menu
     exitwindow = tk.Tk()
+    exitwindow.wm_title("Settings confirmation")
     tk.Label(exitwindow, text="Save settings and track the folowing colors : ?",font=("Helvetica", 14),width=50,height=1).grid(row=0)
     color_texte_selection='' 
     for color in color_to_track: #get all color the user choose
@@ -557,7 +558,7 @@ window.mainloop()  #Starts tkinter loop
 
 #start a new tk (very similar but simplier to the setting one)
 screenim = tk.Tk()  
-screenim.wm_title("Lenght calibration")
+screenim.wm_title("Length calibration")
 screenim.config(background="#FFFFFF")
 
 #Graphics window
@@ -588,25 +589,25 @@ def Screen_shot(): #let the user take a screen shoot for the calibration
     cv2.imwrite('data/binary/Settings/Cal_im.jpg', frame) #save this image
     screenim.destroy() 
     
-exitB= tk.Button(text = 'Screen shot for lenght calibration',font=("Helvetica", 16),width=25, command=Screen_shot)
+exitB= tk.Button(text = 'Screen shot for length calibration',font=("Helvetica", 16),width=25, command=Screen_shot)
 exitB.grid(row=1)
 show_frame()
 screenim.mainloop()
 
 # 3.2 Draw line
 
-#let the user draw a line on the screen shot to calibrate the lenght in the image
+#let the user draw a line on the screen shot to calibrate the length in the image
 
 def vp_start_gui(): #start a tk loop
     global artist_loop
     artist_loop= tk.Tk()
-    artist_loop.wm_title("Lenght draw")
+    artist_loop.wm_title("Length draw")
  
-    def Enter_L(): #let the user enter a lenght in a box
+    def Enter_L(): #let the user enter a length in a box
         global enterL
         enterL=tk.Tk()
-        enterL.wm_title("Enter Lenght")
-        tk.Label(enterL, text="Enter lenght in [m] ?",font=("Helvetica", 14),width=20,height=1).grid(row=0)
+        enterL.wm_title("Enter Length")
+        tk.Label(enterL, text="Enter length in [m] ?",font=("Helvetica", 14),width=20,height=1).grid(row=0)
         global L
         L = tk.Entry(enterL)
         L.grid(row=0, column=1)
@@ -616,7 +617,7 @@ def vp_start_gui(): #start a tk loop
         
     def Quit_prog(): #quit script and save the calibration
 
-        #save the lenght of the segment in pixel
+        #save the length of the segment in pixel
         global x1,x2,y1,y2
         global L
         global screenreduction
@@ -641,7 +642,7 @@ def vp_start_gui(): #start a tk loop
     def check_draw(): #if the user is ok with his draw
         global exitwindow
         exitwindow = tk.Tk()
-        exitwindow.wm_title("Lenght draw")
+        exitwindow.wm_title("Length draw")
         tk.Label(exitwindow, text="Calibration ok ?",font=("Helvetica", 14),width=20,height=1).grid(row=0)
         tk.Button(exitwindow,text='Reset',font=("Helvetica", 14),width=20,height=1, command=refresh).grid(row=2, sticky=tk.W, pady=4)
         tk.Button(exitwindow,text='OK',font=("Helvetica", 14),width=20,height=1, command=Enter_L).grid(row=3, sticky=tk.W, pady=4)

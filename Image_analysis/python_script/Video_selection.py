@@ -44,7 +44,7 @@ my_screen_height = videochoice.winfo_screenheight()
 
 videochoice.wm_title("Video selection")
 videochoice.config(background="#FFFFFF")
-tk.Label(videochoice, text="Chose your video :",font=("Helvetica", 16),width=60,).grid(row=0)
+tk.Label(videochoice, text="Choose your video :",font=("Helvetica", 16),width=60,).grid(row=0)
 
 # 2. Function for the Tk loop
 def Change_video(): # change video : simply destroy show video window

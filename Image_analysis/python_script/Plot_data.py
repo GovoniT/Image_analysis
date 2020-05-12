@@ -142,8 +142,23 @@ for color in color_to_track:
     #plot position
     plt.plot(plot_data_x,plot_data_y,color=\
     BGR_to_matplotlibRGB(globals()['code_'+color]),linestyle='-')
+    
 plt.title('General path : center of panel')
 plt.axis([0,dimensions[1],dimensions[0],0])
+x_axis_value=[]
+x_axis_point=[]
+y_axis_value=[]
+y_axis_point=[]
+for i in range(0,6):
+    x_axis_value.append(round(dimensions[1]/5*i*cal_len,2))
+    y_axis_value.append(round(dimensions[0]/5*i*cal_len,2))
+    x_axis_point.append(dimensions[1]/5*i)
+    y_axis_point.append(dimensions[0]/5*i)
+    
+plt.xticks(x_axis_point, x_axis_value)
+plt.yticks(y_axis_point, y_axis_value)
+axis1.set_xlabel('distance [m]')
+axis1.set_ylabel('distance [m]')
 plt.gca().set_aspect('equal', adjustable='box')
 
 #plot velocity and acceleration data
@@ -225,6 +240,7 @@ plt.show(block=False)
 
 root = tk.Tk() # start Tk loop
 root.geometry("1x1")
+root.wm_title("")
 plt.sca(axis1)
 
 global counter
@@ -269,8 +285,13 @@ def Click_Next(): #plot the next frame data
             
             plt.title('Frame : '+str(counter)+\
             '     Time : '+str(round(time_line[counter],4)))
+
             #add rectangle
             currentAxis = fig1.gca()
+            plt.xticks(x_axis_point, x_axis_value)
+            plt.yticks(y_axis_point, y_axis_value)
+            axis1.set_xlabel('distance [m]')
+            axis1.set_ylabel('distance [m]')
             currentAxis.add_patch(rect1)
             currentAxis.add_patch(rect2)
             currentAxis.add_patch(rect3)
@@ -322,6 +343,10 @@ def Click_Previous(): #same function but decrease
             '     Time : '+str(round(time_line[counter],4)))
             #add rectangle
             currentAxis = fig1.gca()
+            plt.xticks(x_axis_point, x_axis_value)
+            plt.yticks(y_axis_point, y_axis_value)
+            axis1.set_xlabel('distance [m]')
+            axis1.set_ylabel('distance [m]')
             currentAxis.add_patch(rect1)
             currentAxis.add_patch(rect2)
             currentAxis.add_patch(rect3)
@@ -363,6 +388,7 @@ def Save_data():
 def Save_display(): #launch the save root
     global saveroot
     saveroot = tk.Tk()
+    saveroot.wm_title("Save")
     tk.Label(saveroot, text="Data_name").grid(row=0)
     global entry_1
 
@@ -377,10 +403,11 @@ def Restart():
     global restart_prog
     global restartroot
     restartroot = tk.Tk()
-    tk.Label(restartroot, text="Restart data recording ?",width=30).pack()
-    tk.Label(restartroot, text="All data will be deleted !",width=30).pack()
+    restartroot.wm_title("Restart")
+    tk.Label(restartroot, text="Restart an analysis ?",width=30).pack()
+    tk.Label(restartroot, text="All results will be deleted !",width=30).pack()
 
-    tk.Button(restartroot,text='Restart a recorde with the same settings', command=Restart_half,width=30).pack()
+    tk.Button(restartroot,text='Restart an analysis with the same settings', command=Restart_half,width=30).pack()
     tk.Button(restartroot,text='Full Restart', command=Restart_full,width=30).pack()
 
 def Restart_full(): #restart completly the program
@@ -419,8 +446,9 @@ def Exit_prog(): #exit the program
     global restartroot
     global end_program_bool
     restartroot = tk.Tk()
+    restartroot.wm_title("Quit")
     tk.Label(restartroot, text="Exit the program ?").grid(row=0)
-    tk.Label(restartroot, text="All not saved data will be lost !").grid(row=1)
+    tk.Label(restartroot, text="All not saved results will be lost !").grid(row=1)
     tk.Button(restartroot,text='Quit', command=Quit_prog).grid(row=2, column=1, sticky=tk.W, pady=4)
 
 def Quit_prog(): #when the user want to quit programm
