@@ -24,25 +24,19 @@ import os
 
 path_to_dir  = 'data'  # path to directory to clean
 
-path_to_dir2  = 'data_contour'  # path to directory to clean number 2
-
-path_to_dir3  = 'data/binary'  # path to directory to clean number 3
+path_to_dir2  = 'data/binary'  # path to directory to clean number 3
 
 files_in_dir = os.listdir(path_to_dir)# get list of files in the directory
 
-files_in_dir2 = os.listdir(path_to_dir2)#
-
-files_in_dir3 = os.listdir(path_to_dir3)#
+files_in_dir2 = os.listdir(path_to_dir2)
 
 # 2. Cleaning loop
 for file in files_in_dir: #we loop all files in a directoy
     if file !='binary':#save binary file
         os.remove(f'{path_to_dir}/{file}')# delete file
 for file in files_in_dir2:
-    os.remove(f'{path_to_dir2}/{file}')# delete file
-for file in files_in_dir3:
     if (file !='My_data') and (file !='Settings'):#save My_data file and Settings
-        os.remove(f'{path_to_dir3}/{file}')# delete file
+        os.remove(f'{path_to_dir2}/{file}')# delete file
 
 print("\nclear all done")
 
