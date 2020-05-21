@@ -103,9 +103,16 @@ while (restart): #while the restart is asked by the user
     with open ('data/binary/restart.txt', 'rb') as f: # read if the user asked for a restart
         restart=pickle.load(f)
     f.close()
-    with open ('data/binary/restart_half.txt', 'rb') as f:  # read if the user asked for changing the settings
-        restart_setting=pickle.load(f)
-    f.close()
+    try:
+        with open ('data/binary/restart_half.txt', 'rb') as f:  # read if the user asked for changing the settings
+            restart_setting=pickle.load(f)
+        f.close()
+    except:
+        None
+        
+
+
+print('end Image_analysis.py')
 
 # end
 # --------------------------------------------------------------------------------------
