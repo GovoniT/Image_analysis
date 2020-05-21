@@ -48,6 +48,8 @@ global cap
 cap = cv2.VideoCapture(name_video)
 im_w=cap .get(3)
 im_h=cap .get(4)
+im_w_original=im_w
+im_h_original=im_h
 
 window = tk.Tk()  #Makes main window
 my_screen_width = window.winfo_screenwidth() #get the user screen size
@@ -55,20 +57,20 @@ my_screen_height = window.winfo_screenheight()
 
 global screenreduction
 screenreduction=0
-#if the video is too big for user screen then resize it
-while(im_w+300 > my_screen_width):
-    im_w=im_w/2
-    im_h=im_h/2
-    screenreduction+=1 #dont forget to save how many time the image is smaller than the real one
 
-while(im_h +400> my_screen_height):
-    im_w=im_w/2
-    im_h=im_h/2
-    screenreduction+=1
+#if the video is too big for user screen then resize it
+while(im_w +300> my_screen_width):
+    im_w=im_w-im_w_original*0.1 #reduce by 10%
+    im_h=im_h-im_h_original*0.1
+
+while(im_h+380> my_screen_height):
+    im_w=im_w-im_w_original*0.1
+    im_h=im_h-im_h_original*0.1
+
 
 window.wm_title("Tracking settings")
 window.config(background="#FFFFFF")
-window.geometry(str(int(im_w+266))+'x'+str(int(im_h)+400)) #geometry in function of the video size
+window.geometry(str(int(im_w+266))+'x'+str(int(im_h)+380)) #geometry in function of the video size
 
 color_button_w=10 #General width used for the color button
 
@@ -218,7 +220,7 @@ def show_frame(): # #show_frame is used to display the image and show the tracke
     for color in color_to_track:
         for cnt in globals()['contours_'+color]:
             ((center_x,center_y),size_rect,angle) = cv2.minAreaRect(cnt)
-            if size_rect[0] >minimal_size or size_rect[1] >minimal_size :
+            if size_rect[0] >minimal_size and size_rect[1] >minimal_size :
             #filter to eliminate noise that make small rectangle
             
                 rect = ((center_x,center_y),size_rect,angle) #each rectangle contour has a give center,size and angle
@@ -338,9 +340,9 @@ cyanR.place(x=im_w+140,y=30+48*7)
 
 
 
-# value saturation and color treshold tunning
+# value saturation and color threshold tunning
 
-tk.Label(window, text = 'Color Treshold tunning : ',font=("Helvetica", 14),width=20).place(x=135+im_w/2-115,y=im_h+85)
+tk.Label(window, text = 'Color Threshold tunning : ',font=("Helvetica", 14),width=20).place(x=135+im_w/2-115,y=im_h+85)
 tk.Label(window, text = '-',font=("Helvetica", 14),width=20,height=2).place(x=135+im_w/2-118,y=im_h+120)
 
 #color H control
@@ -451,7 +453,7 @@ satdownB.pack()
 satdownB.place(x=135+im_w/2+115,y=im_h+54)
 
 #Size label
-tk.Label(window, text = 'Supress tracking for object smaller than : '+str(minimal_size)+' pixles',font=("Helvetica", 14),width=40,height=2).place(x=155+im_w/2-255,y=im_h+180)
+tk.Label(window, text = 'Suppress tracking for object smaller than : '+str(minimal_size)+' pixles',font=("Helvetica", 14),width=40,height=2).place(x=155+im_w/2-255,y=im_h+180)
 
 def size_up():# each function here simply increase or decrease a variable on the press of buttons and display the change
     global minimal_size
@@ -585,6 +587,20 @@ def show_frame(): #same show frame but without the tracking
     lmain.after(10, show_frame) 
 def Screen_shot(): #let the user take a screen shoot for the calibration
     _, frame = cap.read()
+    im_w=cap .get(3)
+    im_h=cap .get(4)
+
+    #give the user the biggest frame possible
+    global screenreduction
+    while(im_w > my_screen_width):
+        im_w=im_w-im_w_original*0.1
+        im_h=im_h-im_h_original*0.1
+        screenreduction+=0.1
+        
+    while(im_h+100> my_screen_height):
+        im_w=im_w-im_w_original*0.1
+        im_h=im_h-im_h_original*0.1
+
     frame=cv2.resize(frame, tuple([int(im_w),int(im_h)]), interpolation = cv2.INTER_AREA)
     cv2.imwrite('data/binary/Settings/Cal_im.jpg', frame) #save this image
     screenim.destroy() 
@@ -607,7 +623,7 @@ def vp_start_gui(): #start a tk loop
         global enterL
         enterL=tk.Tk()
         enterL.wm_title("Enter Length")
-        tk.Label(enterL, text="Enter length in [m] ?",font=("Helvetica", 14),width=20,height=1).grid(row=0)
+        tk.Label(enterL, text="Enter length in [m] :",font=("Helvetica", 14),width=20,height=1).grid(row=0)
         global L
         L = tk.Entry(enterL)
         L.grid(row=0, column=1)
@@ -621,11 +637,12 @@ def vp_start_gui(): #start a tk loop
         global x1,x2,y1,y2
         global L
         global screenreduction
+
         #remember that we resize the image, so if we apply a screen reduction take it in account for the calibration
         if screenreduction==0:
             calibration_length= (float(L.get())/math.sqrt(((x2-x1)**2 + (y2-y1)**2))) #[m/pixel]
         else:
-            calibration_length= (float(L.get())/((2*screenreduction)*(math.sqrt(((x2-x1)**2 + (y2-y1)**2))))) #[m/pixel]
+            calibration_length= (float(L.get())*(1-screenreduction)/((math.sqrt(((x2-x1)**2 + (y2-y1)**2))))) #[m/pixel]
 
         # save the calibration in a binary file
         with open ('data/binary/Settings/cal_len.txt', 'wb') as f:
@@ -662,11 +679,11 @@ def vp_start_gui(): #start a tk loop
             my_art.create_line(x1,y1,x2,y2,fill='blue',width=3) #draw the line between the two point
             click_number=0
             check_draw()
-
+            
     #general tk window configuration
-    my_art = tk.Canvas(artist_loop, width=im_w,height=im_h)
+    my_art = tk.Canvas(artist_loop, width=im_w_original*(1-screenreduction),height=im_h_original*(1-screenreduction))
     image = ImageTk.PhotoImage(file = "data/binary/Settings/Cal_im.jpg")
-    my_art.create_image(im_w/2, im_h/2, image = image)
+    my_art.create_image(im_w_original*(1-screenreduction)/2, im_h_original*(1-screenreduction)/2, image = image)
     tk.Label(artist_loop, text="Draw a line of known length",font=("Helvetica", 14),width=20,height=1).grid(row=0)
     my_art.grid(row=1)
     my_art.bind('<Button-1>',draw_line)

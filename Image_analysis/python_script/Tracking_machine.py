@@ -154,7 +154,7 @@ for number, item in enumerate(frame_liste):# get frame by frame
         for cnt in globals()['contours_'+color]: #for every contour found for one color
             ((center_x,center_y),size_rect,angle) = cv2.minAreaRect(cnt)
 
-            if size_rect[0] >minimal_size or size_rect[1] >minimal_size:#filter to eliminate noise that forme small rectangle
+            if size_rect[0] >minimal_size and size_rect[1] >minimal_size:#filter to eliminate noise that forme small rectangle
                 object_found_image+=1
                 globals()['size_'+color].append(size_rect)
                 globals()['pos_'+color].append((center_x,center_y))

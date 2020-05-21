@@ -27,11 +27,16 @@ import math
 import time
 import tkinter as tk
 import matplotlib.pyplot as plt
+from matplotlib import cbook
 from matplotlib.patches import Rectangle
 #_________________________________________
 
 # 1. Importing data from Tracking machine
 
+# Name of the video
+with open ('data/binary/name_video.txt', 'rb') as f:
+    name_video= pickle.load(f)
+f.close()
 #Getting all the data stocked in the txt files
 with open ('data/binary/Settings/cal_len.txt', 'rb') as f:
     cal_len= pickle.load(f)
@@ -143,7 +148,7 @@ for color in color_to_track:
     plt.plot(plot_data_x,plot_data_y,color=\
     BGR_to_matplotlibRGB(globals()['code_'+color]),linestyle='-')
     
-plt.title('General path : center of panel')
+plt.title('General path : '+str(name_video))
 plt.axis([0,dimensions[1],dimensions[0],0])
 x_axis_value=[]
 x_axis_point=[]
@@ -242,19 +247,42 @@ root = tk.Tk() # start Tk loop
 root.geometry("1x1")
 root.wm_title("")
 plt.sca(axis1)
+#screen dimension
+my_screen_width = root.winfo_screenwidth() #get the user screen size
+my_screen_height = root.winfo_screenheight()
+im_w=dimensions[1]
+im_h=dimensions[0]
+#if the image is too big for user screen then resize it
+while(im_w+100> my_screen_width):
+    im_w=im_w/2
+    im_h=im_h/2
+while(im_h +100> my_screen_height):
+    im_w=im_w/2
+    im_h=im_h/2
+
 
 global counter
 counter = -1
 global increment
-increment=1
+increment =tk.IntVar()
+increment.set(1)
+global check_frame
+check_frame = False
 global data_name
 data_name=''
 
-def Click_Next(): #plot the next frame data
+def Click_Next(check_frame_in): #plot the next frame data
     global counter
-    counter += increment
+    global increment
+    global check_frame
+    stay_counter=counter #if just check frame, stay at the same frame
+    counter += int(increment.get())
     if counter>=number_frame: #reset to first frame
         counter-=number_frame
+    
+    if check_frame_in==True: # if just check the frame, counter dont change
+        counter=stay_counter
+        
     plt.clf()
     if counter not in fail_to_track: #plot only if data available
         for color in color_to_track:
@@ -288,6 +316,11 @@ def Click_Next(): #plot the next frame data
 
             #add rectangle
             currentAxis = fig1.gca()
+            if check_frame==True:
+                nameframe='frame'+str(counter)
+                image = plt.imread('data/'+nameframe+'.jpg')
+                plt.imshow(image)
+            
             plt.xticks(x_axis_point, x_axis_value)
             plt.yticks(y_axis_point, y_axis_value)
             axis1.set_xlabel('distance [m]')
@@ -306,8 +339,8 @@ def Click_Next(): #plot the next frame data
 
 def Click_Previous(): #same function but decrease
     global counter
-    global increment
-    counter -= increment
+    global check_frame
+    counter -= int(increment.get())
     if counter<=-1: #go to last frame
         counter+= (number_frame)
     plt.clf()
@@ -343,6 +376,10 @@ def Click_Previous(): #same function but decrease
             '     Time : '+str(round(time_line[counter],4)))
             #add rectangle
             currentAxis = fig1.gca()
+            if check_frame==True:
+                nameframe='frame'+str(counter)
+                image = plt.imread('data/'+nameframe+'.jpg')
+                plt.imshow(image)
             plt.xticks(x_axis_point, x_axis_value)
             plt.yticks(y_axis_point, y_axis_value)
             axis1.set_xlabel('distance [m]')
@@ -358,11 +395,17 @@ def Click_Previous(): #same function but decrease
     plt.axis([0,dimensions[1],dimensions[0],0])
     plt.gca().set_aspect('equal', adjustable='box')
 
-
-def Change_increment(new_number_increment): #use to change incrementation bewteen frame
-    global increment
-    increment=new_number_increment
-    
+def Check_frame(): #display the current frame, so that the user can check the data
+    global check_frame
+    if check_frame==False:
+        check_frame=True
+        
+    else:
+        check_frame=False
+    #display result
+        global counter
+    Click_Next(True)
+      
 #Save data compile all the data in a .txt file
 #this .txt file is arrange with a space bewteen data
 #so that it can be reuse with pandas, excel, matlab, etc...
@@ -422,7 +465,8 @@ def Restart_full(): #restart completly the program
     f.close()
     
     #desrtoy all windows
-    plt.close()
+    plt.close(fig1)
+    plt.close(fig2)
     restartroot.destroy()
     root.destroy()
 
@@ -438,7 +482,8 @@ def Restart_half(): #restart the program with same settings
     f.close()
     
     #desrtoy all windows
-    plt.close()
+    plt.close(fig1)
+    plt.close(fig2)
     restartroot.destroy()
     root.destroy()
     
@@ -462,26 +507,33 @@ def Quit_prog(): #when the user want to quit programm
     restartroot.destroy()
     root.destroy()
 
+
 # Button for the Tk interface
-mButton1 = tk.Button(text = 'Next',width=10, command = Click_Next, fg = "black", bg = "white")
+mButton1 = tk.Button(text = 'Next',width=10, command = lambda :Click_Next(False), fg = "black", bg = "white")
 mButton1.pack()
 mButton2 = tk.Button(text = 'Previous',width=10,command = Click_Previous, fg = "black", bg = "white")
 mButton2.pack()
-mButton3 = tk.Button(text = '1',width=10, command=lambda j=1: Change_increment(j), fg = "black", bg = "white")
+mButton2 = tk.Button(text = 'Check frame',width=10,command = Check_frame, fg = "black", bg = "white")
+mButton2.pack()
+mButton3 = tk.Radiobutton(text="1", variable=increment, value=1,width = 8, fg = "black", bg = "white")
 mButton3.pack()
-mButton4 = tk.Button(text = '5',width=10, command=lambda j=5: Change_increment(j), fg = "black", bg = "white")
+mButton4 = tk.Radiobutton(text="5", variable=increment, value=5,width = 8, fg = "black", bg = "white")
 mButton4.pack()
-mButton5 = tk.Button(text = '10',width=10, command=lambda j=10: Change_increment(j), fg = "black", bg = "white")
+mButton5 = tk.Radiobutton(text="10", variable=increment, value=10,width = 8, fg = "black", bg = "white")
 mButton5.pack()
-mButton6 = tk.Button(text = '20',width=10, command=lambda j=20: Change_increment(j), fg = "black", bg = "white")
+mButton6 = tk.Radiobutton(text="20", variable=increment, value=20,width = 8, fg = "black", bg = "white")
 mButton6.pack()
-mButton7 = tk.Button(text = 'Save Data (.txt import wizard Excel)',width=30, command= Save_display, fg = "black", bg = "white")
+mButton7 = tk.Radiobutton(text="100", variable=increment, value=100,width = 8, fg = "black", bg = "white")
 mButton7.pack()
-mButton8 = tk.Button(text = 'Restart vith another video ',width=20, command= Restart, fg = "black", bg = "white")
+
+mButton8 = tk.Button(text = 'Save Data (.txt import wizard Excel)',width=30, command= Save_display, fg = "black", bg = "white")
 mButton8.pack()
-mButton8 = tk.Button(text = 'Quit program ',width=20, command= Exit_prog, fg = "black", bg = "white")
-mButton8.pack()
+mButton9 = tk.Button(text = 'Restart vith another video ',width=20, command= Restart, fg = "black", bg = "white")
+mButton9.pack()
+mButton10 = tk.Button(text = 'Quit program ',width=20, command= Exit_prog, fg = "black", bg = "white")
+mButton10.pack()
 
 root.mainloop() #Tk loop
+
 #end
 #-------------------------------------------------------------------------------------
