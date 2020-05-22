@@ -103,14 +103,17 @@ def Show_video(video_indice): #launch video indicated by user
     #video
     cap = cv2.VideoCapture(path_to_dir+'/'+files_in_dir[video_indice])
     im_w=cap.get(3) #video width
+    im_w_original=im_w
     im_h=cap.get(4) #video height
+    im_h_original=im_h
     #if the video is too big for user screen, resize it
-    while(im_w > my_screen_width):
-        im_w=im_w/2
-        im_h=im_h/2 
-    while(im_h > my_screen_height):
-        im_w=im_w/2
-        im_h=im_h/2
+    while(im_w +50> my_screen_width):
+        im_w=im_w-im_w_original*0.1 #reduce by 10%
+        im_h=im_h-im_h_original*0.1
+
+    while(im_h+100> my_screen_height):
+        im_w=im_w-im_w_original*0.1
+        im_h=im_h-im_h_original*0.1
         
     #Graphics window
     imageFrame = tk.Frame(screenim, width=im_w , height=im_h)
