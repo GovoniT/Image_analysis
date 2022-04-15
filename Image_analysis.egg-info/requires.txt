@@ -1,5 +1,0 @@
-opencv-python>=4.2.0.34
-Pillow>=7.1.2
-PySimpleGUI>=4.18.2
-matplotlib>=3.2.1
-NumPy>=1.17
