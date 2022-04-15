@@ -132,4 +132,5 @@ dmypy.json
 .pyre/
 
 Image_analysis.egg-info/
+.git/
 
