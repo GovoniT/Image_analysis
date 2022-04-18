@@ -7,7 +7,7 @@ Image_analysis is a python code that allow you from a recorded video to track re
 You can clone and install this repository with the following commands:
 
 ```bash
-git@github.com:GovoniT/Image_analysis.git
+git clone git@github.com:GovoniT/Image_analysis.git
 cd Image_analysis
 pip install -e .
 ```
